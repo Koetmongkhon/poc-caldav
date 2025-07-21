@@ -1,0 +1,5 @@
+# macOS, Folder view configuration files
+.DS_Store
+
+# nodejs
+node_modules

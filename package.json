@@ -1,0 +1,8 @@
+{
+  "name": "caldav",
+  "version": "0.0.1",
+  "description": "caldev poc with nodejs",
+  "main": "app.js",
+  "author": "novelintomusic",
+  "license": "MIT"
+}
