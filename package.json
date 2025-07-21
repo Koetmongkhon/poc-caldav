@@ -4,5 +4,9 @@
   "description": "caldev poc with nodejs",
   "main": "app.js",
   "author": "novelintomusic",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.1.0",
+    "tsdav": "^2.1.5"
+  }
 }
