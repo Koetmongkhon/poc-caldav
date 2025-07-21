@@ -3,3 +3,6 @@
 
 # nodejs
 node_modules
+
+# Security
+.env
