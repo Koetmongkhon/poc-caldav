@@ -1,6 +1,8 @@
-class Calendars {
+const Base = require("./Base");
+
+class Calendars extends Base {
   constructor(config) {
-    this.config = config;
+    super(config);
   }
 
   /** @type {import("../models/calendars")} */
@@ -11,9 +13,7 @@ class Calendars {
   propfind(req, res) {
     try {
       const resultXml = this.model.propfind(req.body);
-      res.set('Content-Type', 'text/xml');
-      res.status(207);
-      res.send(resultXml).end();
+      this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);
       let code = 500;
