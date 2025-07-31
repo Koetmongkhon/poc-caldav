@@ -16,8 +16,14 @@ class Calendars {
       res.send(resultXml).end();
     } catch (err) {
       console.log(err);
-      res.status(500);
-      res.json({"message": "internal server error"});
+      let code = 500;
+      let message = "internal server";
+      if (err.message == "invalid body") {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({"message": message});
     }
   };
 }

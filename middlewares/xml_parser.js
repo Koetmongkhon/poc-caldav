@@ -3,7 +3,6 @@ var xml = require("libxmljs");
 const xmlParser = (req, res, next) => {
   try {
     if (req.rawBody) {
-      console.log(req.rawBody);
       req.body = xml.parseXml(req.rawBody);
     }
     next();
