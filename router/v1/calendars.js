@@ -1,4 +1,4 @@
-const { xmlParser } = require("./middlewares/xml_parser");
+const { xmlParser } = require("../../middlewares/xml_parser");
 
 const {
   calendars,

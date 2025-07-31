@@ -9,7 +9,8 @@ app.use(xmlparser());
 global.models = require("./models");
 global.handlers = require("./handlers");
 
-const calendarRouter = require("./calendar_routes");
-app.use("/api/v1/calendar", calendarRouter);
+const routers = require("./router");
+
+app.use("/api", routers);
 
 app.listen(9898, () => console.log("server listening at :9898"));
