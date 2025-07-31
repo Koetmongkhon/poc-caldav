@@ -271,8 +271,8 @@ class Calendars {
     return response;
   }
 
-  probfind(xmlDoc) {
-    console.log("request probfind");
+  propfind(xmlDoc) {
+    console.log("request propfind");
     const node = xmlDoc.get('/A:propfind/A:prop', {
       A: 'DAV:',
       B: "urn:ietf:params:xml:ns:caldav",

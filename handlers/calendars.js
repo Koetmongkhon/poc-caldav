@@ -8,9 +8,9 @@ class Calendars {
     return global.models.calendars;
   }
 
-  probfind(req, res) {
+  propfind(req, res) {
     try {
-      const resultXml = this.model.probfind(req.body);
+      const resultXml = this.model.propfind(req.body);
       res.set('Content-Type', 'text/xml');
       res.status(207);
       res.send(resultXml).end();

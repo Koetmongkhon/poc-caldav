@@ -5,7 +5,7 @@ const {
 } = global.handlers;
 const router = require("express").Router();
 
-router.propfind("", xmlParser, calendars.probfind.bind(calendars));
+router.propfind("", xmlParser, calendars.propfind.bind(calendars));
 // router.proppatch();
 // router.options();
 // router.report();
