@@ -338,7 +338,8 @@ class Calendars {
           break;
 
         case "getcontenttype":
-          response += "<d:getcontenttype>text/calendar; charset=utf-8; component=" + calendar.supported_cal_component + "</d:getcontenttype>";
+          if (calendar.supported_cal_component)
+            response += "<d:getcontenttype>text/calendar; charset=utf-8; component=" + calendar.supported_cal_component + "</d:getcontenttype>";
           break;
 
         case "calendar-data":
@@ -347,10 +348,26 @@ class Calendars {
           break;
 
         default:
-          if (name != "text") log.warn("P-R: not handled: " + name);
+          if (name != "text") console.log("P-R: not handled: " + name);
           break;
       }
     });
+    return response;
+  }
+
+  _returnEvents(calendar, events, props) {
+    let response = "";
+    events.forEach(event => {
+      response += "<d:response><d:href>" + this.config.davPrefix + calendar.id + "/" + event.id + ".ics</d:href>";
+      response += "<d:propstat>";
+      response += "<d:prop>";
+
+      response += this._returnEvent(calendar, event, props);
+
+      response += "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat>";
+      response += "</d:response>";
+    });
+    response += "</d:multistatus>";
     return response;
   }
 
@@ -456,19 +473,100 @@ class Calendars {
     });
     const props = nodeProp.childNodes();
 
-    events.forEach(event => {
-      response += "<d:response><d:href>" + this.config.davPrefix + calendarId + "/" + event.pkey + ".ics</d:href>";
-      response += "<d:propstat>";
-      response += "<d:prop>";
+    response += this._returnEvents(calendar, events, props);
+    return response;
+  }
 
-      response += this._returnEvent(calendar, event, props);
+  calendarMultiget(calendarId, xmlDoc) {
+    let response = getXMLHead();
+    response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
+    const user = "USERNAME";
 
-      response += "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat>";
-      response += "</d:response>";
+    const node = xmlDoc.get('/B:calendar-multiget', {
+      A: 'DAV:',
+      B: "urn:ietf:params:xml:ns:caldav",
+      C: 'http://calendarserver.org/ns/',
+      D: "http://apple.com/ns/ical/",
+      E: "http://me.com/_namespace/"
     });
-    response += "</d:multistatus>";
+
+    const arrHrefs = [];
+    let props = [];
+    if (node) {
+      const children = node.childNodes();
+      children.forEach(child => {
+        const name = child.name();
+        switch (name) {
+          case 'prop':
+            props = child.childNodes();
+            break;
+
+          case 'href':
+            arrHrefs.push(parseHrefToIcsId(child.text()));
+            break;
+
+          default:
+            if (name != 'text') console.log("P-R: not handled: " + name);
+            break;
+        }
+      });
+    }
+    console.log("id:", arrHrefs);
+    console.log("props:", props);
+
+    // TODO: get events from db by arrHrefs
+    /*
+      [
+        {
+          id: "",
+          name: "",
+          start: 1234,
+          end: 1234,
+          isAllDay: true,
+          attendees: []{
+            id: "",
+            email: "",
+          },
+          creator: "",
+        }
+      ]
+    */
+    const events = [
+      {
+        id: "EVENT1",
+        name: "event_1",
+        start: 1753951657000,
+        end: 1753951659000,
+        isAllDay: false,
+        creator: user,
+      },
+      {
+        id: "EVENT2",
+        name: "event_2",
+        start: 1753952657000,
+        end: 1753952659000,
+        isAllDay: false,
+        creator: user,
+      },
+      {
+        id: "EVENT3",
+        name: "event_3",
+        start: 1753953657000,
+        end: 1753953659000,
+        isAllDay: false,
+        creator: user,
+      }
+    ];
+    response += this._returnEvents({ id: calendarId }, events, props)
     return response;
   }
 };
 
 module.exports = Calendars;
+
+function parseHrefToIcsId(href) {
+  var e = href.split("/");
+  var id = e[e.length - 1];
+
+  return id.substr(0, id.length - 4);
+}

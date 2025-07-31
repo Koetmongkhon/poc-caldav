@@ -51,14 +51,13 @@ class Calendars {
     const name = rootNode.name();
     switch (name) {
       case "sync-collection":
+        // handleReportSyncCollection(comm, cl);
         console.log("sync-collection");
         throw new Error("unimplemented");
-        // handleReportSyncCollection(comm, cl);
 
       case "calendar-multiget":
         console.log("calendar-multiget");
-        throw new Error("unimplemented");
-        // handleReportCalendarMultiget(comm, cl);
+        return this.model.calendarMultiget(calId, xmlDoc);
 
       case "calendar-query":
         console.log("calendar-query");
@@ -66,7 +65,7 @@ class Calendars {
 
       default:
         if (name != "text") console.log("P-R: not handled: " + name);
-          throw new Error("invalid report request");
+        throw new Error("invalid report request");
     };
   }
 }
