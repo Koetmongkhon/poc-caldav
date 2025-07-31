@@ -18,7 +18,7 @@ class Calendars {
   }
 
   _getCalendarRootNodeResponse(owner, children, isAll) {
-    var response = "";
+    const response = "";
 
     response += "<d:response><d:href>" + this.config.davPrefix + "USERNAME" + "/CALENDAR-ID" + "</d:href>";
     response += "<d:propstat>";
@@ -28,10 +28,10 @@ class Calendars {
       response += "<d:owner><d:href>" + this.config.davPrefix + "p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/></d:resourcetype>";
     } else {
-      var len = children.length;
-      for (var i = 0; i < len; ++i) {
-        var child = children[i];
-        var name = child.name();
+      const len = children.length;
+      for (const i = 0; i < len; ++i) {
+        const child = children[i];
+        const name = child.name();
         switch (name) {
           // case "current-user-privilege-set":
           //   response += getCurrentUserPrivilegeSet();
@@ -61,9 +61,9 @@ class Calendars {
   }
 
   _returnPropfindElements(owner, calendar, children, isAll, callback) {
-    var response = "";
+    const response = "";
 
-    var token = "SYNC-TOKEN";
+    const token = "SYNC-TOKEN";
 
     if (isAll) {
       response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + "#FFFFFF" + "</xical:calendar-color>";
@@ -78,10 +78,10 @@ class Calendars {
       response += "<cal:schedule-calendar-transp><cal:opaque/></cal:schedule-calendar-transp>";
       response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
     } else {
-      var len = children.length;
-      for (var i = 0; i < len; ++i) {
-        var child = children[i];
-        var name = child.name();
+      const len = children.length;
+      for (const i = 0; i < len; ++i) {
+        const child = children[i];
+        const name = child.name();
         switch (name) {
           // case "add-member":
           //     response += "";
@@ -120,7 +120,7 @@ class Calendars {
           //   break;
 
           case "calendar-timezone":
-            var timezone = "Asia/Bangkok";
+            const timezone = "Asia/Bangkok";
             // if (timezone)
             //   timezone = timezone.replace(/\r\n|\r|\n/g, "&#13;\r\n");
             // else
@@ -270,7 +270,7 @@ class Calendars {
   }
 
   _returnCalendar(owner, calendar, children, isAll) {
-    var response = "";
+    const response = "";
 
     response += "	<d:response>";
     response += "		<d:href>" + this.config.davPrefix + "cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";

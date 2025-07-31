@@ -1,4 +1,4 @@
-var xml = require("libxmljs");
+const xml = require("libxmljs");
 
 const xmlParser = (req, res, next) => {
   try {
