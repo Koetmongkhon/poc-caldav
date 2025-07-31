@@ -5,14 +5,14 @@ class Calendars extends Base {
     super(config);
   }
 
-  /** @type {import("../models/calendars")} */
-  get model() {
-    return global.models.calendars;
+  /** @type {import("../facades/calendars")} */
+  get facade() {
+    return global.facades.calendars;
   }
 
   propfind(req, res) {
     try {
-      const resultXml = this.model.propfind(req.body);
+      const resultXml = this.facade.propfind(req.body);
       this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);
@@ -23,7 +23,7 @@ class Calendars extends Base {
         message = err.message;
       }
       res.status(code);
-      res.json({"message": message});
+      res.json({ "message": message });
     }
   };
 }

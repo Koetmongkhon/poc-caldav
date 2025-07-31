@@ -273,7 +273,7 @@ class Calendars {
     var response = "";
 
     response += "	<d:response>";
-    response += "		<d:href>" + this.config.davPrefix + "cal/" + owner + "/" + calendar.pkey + "/</d:href>";
+    response += "		<d:href>" + this.config.davPrefix + "cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";
     response += "		<d:propstat>";
     response += "			<d:prop>";
 
@@ -287,50 +287,8 @@ class Calendars {
     return response;
   }
 
-  _isPropfind(xmlDoc) {
-    const node = xmlDoc.get("/A:propfind", {
-      A: "DAV:",
-      B: "urn:ietf:params:xml:ns:carddav",
-      C: "http://calendarserver.org/ns/",
-      D: "http://apple.com/ns/ical/",
-      E: "http://me.com/_namespace/"
-    });
-    if (node && Object.keys(node).length != 0) {
-      return true;
-    }
-
-    return false
-  }
-
-  _isAllProp(xmlDoc) {
-    const temp = xmlDoc.get("/A:propfind/A:allprop", {
-      A: "DAV:",
-      B: "urn:ietf:params:xml:ns:caldav",
-      C: "http://calendarserver.org/ns/",
-      D: "http://apple.com/ns/ical/",
-      E: "http://me.com/_namespace/"
-    });
-    if (temp) {
-      console.log("all prop");
-      return true;
-    }
-    return false;
-  }
-
-  propfind(xmlDoc) {
-    console.log("request propfind");
-    if (!this._isPropfind(xmlDoc))
-      throw new Error("invalid body")
-
-
-    const node = xmlDoc.get("/A:propfind/A:prop", {
-      A: "DAV:",
-      B: "urn:ietf:params:xml:ns:caldav",
-      C: "http://calendarserver.org/ns/",
-      D: "http://apple.com/ns/ical/",
-      E: "http://me.com/_namespace/"
-    });
-
+  propfind(xmlDoc, isAll) {
+    console.log("request propfind:", isAll);
     let response = getXMLHead();
     if (this._isCheckSum(xmlDoc)) {
       console.log("get summary");
@@ -340,15 +298,20 @@ class Calendars {
       return response;
     }
 
-    const isAllProp = this._isAllProp(xmlDoc);
-
-    console.log("get full");
     let children;
-    if (!isAllProp)
+    if (!isAll) {
+      const node = xmlDoc.get("/A:propfind/A:prop", {
+        A: "DAV:",
+        B: "urn:ietf:params:xml:ns:caldav",
+        C: "http://calendarserver.org/ns/",
+        D: "http://apple.com/ns/ical/",
+        E: "http://me.com/_namespace/"
+      });
       children = node.childNodes();
+    }
 
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
-    response += this._getCalendarRootNodeResponse("USERNAME", children, isAllProp);
+    response += this._getCalendarRootNodeResponse("USERNAME", children, isAll);
 
     const calendars = [
       {
@@ -358,7 +321,7 @@ class Calendars {
       }
     ];
     calendars.forEach(c => {
-      response += this._returnCalendar("USERNAME", c, children, isAllProp);
+      response += this._returnCalendar("USERNAME", c, children, isAll);
     });
     response += "</d:multistatus>";
     return response;

@@ -7,6 +7,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
 
 global.models = require("./models");
+global.facades = require("./facades");
 global.handlers = require("./handlers");
 
 const routers = require("./router");

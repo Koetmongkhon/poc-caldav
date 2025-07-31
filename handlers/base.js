@@ -4,7 +4,7 @@ class Base {
   }
 
   responseXml(res, status, body) {
-    res.set('Content-Type', 'text/xml');
+    res.set("Content-Type", "text/xml");
     res.status(status);
     res.send(body).end();
   }
