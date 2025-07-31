@@ -1,3 +1,4 @@
+const moment = require("moment");
 const { encodeHTML } = require("../utils/utils");
 const { getXMLHead } = require("../utils/xml");
 
@@ -326,6 +327,148 @@ class Calendars {
     response += "</d:multistatus>";
     return response;
   };
+
+  _returnEvent(calendar, event, props) {
+    let response = "";
+    props.forEach(child => {
+      const name = child.name();
+      switch (name) {
+        case "getetag":
+          response += "<d:getetag>\"" + `ETAG-${event.id}` + "\"</d:getetag>";
+          break;
+
+        case "getcontenttype":
+          response += "<d:getcontenttype>text/calendar; charset=utf-8; component=" + calendar.supported_cal_component + "</d:getcontenttype>";
+          break;
+
+        case "calendar-data":
+          // TODO: change event into ics
+          response += "<cal:calendar-data>" + `<BEGIN>${JSON.stringify(event)}</BEGIN>` + "</cal:calendar-data>"; // has to be cal: since a few lines below the namespace is cal: not c:
+          break;
+
+        default:
+          if (name != "text") log.warn("P-R: not handled: " + name);
+          break;
+      }
+    });
+    return response;
+  }
+
+  calendarQuery(calendarId, xmlDoc) {
+    const filter = { calendarId: calendarId };
+    let response = getXMLHead();
+    response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
+
+    // find filter in xml
+    const nodeFilter = xmlDoc.get(`/B:calendar-query/B:filter/B:comp-filter[@name = "VCALENDAR"]/B:comp-filter[@name = "VEVENT"]/B:time-range`, {
+      A: "DAV:",
+      B: "urn:ietf:params:xml:ns:caldav",
+      C: "http://calendarserver.org/ns/",
+      D: "http://apple.com/ns/ical/",
+      E: "http://me.com/_namespace/"
+    });
+    if (nodeFilter) {
+      const attrs = nodeFilter.attrs();
+      attrs.forEach(attr => {
+        switch (attr.name()) {
+          case "start":
+            const filterStart = moment(attr.value());
+            filter.startDate = filterStart.unix() + "000";
+            break;
+
+          case "end":
+            const filterEnd = moment(attr.value());
+            filter.endDate = filterEnd.unix() + "000";
+            break;
+
+          default:
+            break;
+        }
+      });
+    }
+    console.log(filter);
+
+    const user = "USERNAME";
+    // TODO: get calendar from db
+    /*
+      {
+        id: "",
+        name: "",
+        type: "",
+      }
+    */
+    const calendar = {
+      id: "CAL1",
+      name: "cal_1",
+      type: "RESOURCE",
+    }
+    calendar.supported_cal_component = "VEVENT";
+    // TODO: get events from db
+    /*
+      [
+        {
+          id: "",
+          name: "",
+          start: 1234,
+          end: 1234,
+          isAllDay: true,
+          attendees: []{
+            id: "",
+            email: "",
+          },
+          creator: "",
+        }
+      ]
+    */
+    const events = [
+      {
+        id: "EVENT1",
+        name: "event_1",
+        start: 1753951657000,
+        end: 1753951659000,
+        isAllDay: false,
+        creator: user,
+      },
+      {
+        id: "EVENT2",
+        name: "event_2",
+        start: 1753952657000,
+        end: 1753952659000,
+        isAllDay: false,
+        creator: user,
+      },
+      {
+        id: "EVENT3",
+        name: "event_3",
+        start: 1753953657000,
+        end: 1753953659000,
+        isAllDay: false,
+        creator: user,
+      }
+    ];
+
+    const nodeProp = xmlDoc.get("/B:calendar-query/A:prop", {
+      A: "DAV:",
+      B: "urn:ietf:params:xml:ns:caldav",
+      C: "http://calendarserver.org/ns/",
+      D: "http://apple.com/ns/ical/",
+      E: "http://me.com/_namespace/"
+    });
+    const props = nodeProp.childNodes();
+
+    events.forEach(event => {
+      response += "<d:response><d:href>" + this.config.davPrefix + calendarId + "/" + event.pkey + ".ics</d:href>";
+      response += "<d:propstat>";
+      response += "<d:prop>";
+
+      response += this._returnEvent(calendar, event, props);
+
+      response += "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat>";
+      response += "</d:response>";
+    });
+    response += "</d:multistatus>";
+    return response;
+  }
 };
 
 module.exports = Calendars;

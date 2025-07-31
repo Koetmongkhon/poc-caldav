@@ -44,6 +44,31 @@ class Calendars {
     const isAll = this._isAllProp(body);
     return this.model.propfind(body, isAll);
   }
+
+  report(calId, xmlDoc) {
+    console.log("request report");
+    const rootNode = xmlDoc.root();
+    const name = rootNode.name();
+    switch (name) {
+      case "sync-collection":
+        console.log("sync-collection");
+        throw new Error("unimplemented");
+        // handleReportSyncCollection(comm, cl);
+
+      case "calendar-multiget":
+        console.log("calendar-multiget");
+        throw new Error("unimplemented");
+        // handleReportCalendarMultiget(comm, cl);
+
+      case "calendar-query":
+        console.log("calendar-query");
+        return this.model.calendarQuery(calId, xmlDoc);
+
+      default:
+        if (name != "text") console.log("P-R: not handled: " + name);
+          throw new Error("invalid report request");
+    };
+  }
 }
 
 module.exports = Calendars;

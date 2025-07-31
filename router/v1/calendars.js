@@ -8,7 +8,7 @@ const router = require("express").Router();
 router.propfind("", xmlParser, calendars.propfind.bind(calendars));
 // router.proppatch();
 // router.options();
-// router.report();
+router.report("/:calId", xmlParser, calendars.report.bind(calendars));
 // // router.makeCalendar();
 // router.put();
 // router.get();

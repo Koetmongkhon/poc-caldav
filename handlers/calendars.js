@@ -26,6 +26,24 @@ class Calendars extends Base {
       res.json({ "message": message });
     }
   };
+
+  report(req, res) {
+    try {
+      const { calId } = req.params;
+      const resultXml = this.facade.report(calId, req.body);
+      this.responseXml(res, 207, resultXml);
+    } catch (err) {
+      console.log(err);
+      let code = 500;
+      let message = "internal server";
+      if (err.message.includes("invalid")) {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({ "message": message });
+    }
+  }
 }
 
 module.exports = Calendars;
