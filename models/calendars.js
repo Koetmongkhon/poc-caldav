@@ -7,10 +7,10 @@ class Calendars {
   };
 
   _isCheckSum(xmlDoc) {
-    const nodeChecksum = xmlDoc.get('/A:propfind/A:prop/C:checksum-versions', {
-      A: 'DAV:',
+    const nodeChecksum = xmlDoc.get("/A:propfind/A:prop/C:checksum-versions", {
+      A: "DAV:",
       B: "urn:ietf:params:xml:ns:caldav",
-      C: 'http://calendarserver.org/ns/',
+      C: "http://calendarserver.org/ns/",
       D: "http://apple.com/ns/ical/",
       E: "http://me.com/_namespace/"
     });
@@ -33,19 +33,19 @@ class Calendars {
         var child = children[i];
         var name = child.name();
         switch (name) {
-          // case 'current-user-privilege-set':
+          // case "current-user-privilege-set":
           //   response += getCurrentUserPrivilegeSet();
           //   break;
 
-          case 'owner':
+          case "owner":
             response += "<d:owner><d:href>" + this.config.davPrefix + "p/" + owner + "/</d:href></d:owner>";
             break;
 
-          case 'resourcetype':
+          case "resourcetype":
             response += "<d:resourcetype><d:collection/></d:resourcetype>";
             break;
 
-          // case 'supported-report-set':
+          // case "supported-report-set":
           //   response += getSupportedReportSet(true);
           //   break;
         }
@@ -83,181 +83,181 @@ class Calendars {
         var child = children[i];
         var name = child.name();
         switch (name) {
-          // case 'add-member':
+          // case "add-member":
           //     response += "";
           //     break;
 
-          // case 'allowed-sharing-modes':
+          // case "allowed-sharing-modes":
           //   response += "<cs:allowed-sharing-modes><cs:can-be-shared/><cs:can-be-published/></cs:allowed-sharing-modes>";
           //   break;
 
-          // case 'autoprovisioned':
+          // case "autoprovisioned":
           //     response += "";
           //     break;
 
-          // case 'bulk-requests':
+          // case "bulk-requests":
           //     response += "";
           //     break;
 
-          case 'calendar-color':
+          case "calendar-color":
             response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + "#FFFFFF" + "</xical:calendar-color>";
             break;
 
-          case 'calendar-description':
+          case "calendar-description":
             if (calendar.description)
               response += "<cal:calendar-description>" + calendar.description + "</cal:calendar-description>";
             break;
 
-          // case 'calendar-free-busy-set':
+          // case "calendar-free-busy-set":
           //     response += "";
           //     break;
 
-          // case 'calendar-order':
+          // case "calendar-order":
           //   if (!calendar.order)
           //     calendar.order = 1;
           //   response += "<cal:calendar-order>" + calendar.order + "</cal:calendar-order>";
           //   response += "<xical:calendar-order xmlns:xical=\"http://apple.com/ns/ical/\">" + calendar.order + "</xical:calendar-order>";
           //   break;
 
-          case 'calendar-timezone':
+          case "calendar-timezone":
             var timezone = "Asia/Bangkok";
             // if (timezone)
-            //   timezone = timezone.replace(/\r\n|\r|\n/g, '&#13;\r\n');
+            //   timezone = timezone.replace(/\r\n|\r|\n/g, "&#13;\r\n");
             // else
             //   timezone = "";
 
             response += "<cal:calendar-timezone>" + timezone + "</cal:calendar-timezone>";
             break;
 
-          // case 'current-user-privilege-set':
+          // case "current-user-privilege-set":
           //   response += getCurrentUserPrivilegeSet();
           //   break;
 
-          // case 'default-alarm-vevent-date':
+          // case "default-alarm-vevent-date":
           //     response += "";
           //     break;
 
-          // case 'default-alarm-vevent-datetime':
+          // case "default-alarm-vevent-datetime":
           //     response += "";
           //     break;
 
-          case 'displayname':
+          case "displayname":
             response += "<d:displayname>" + encodeHTML(calendar.displayname) + "</d:displayname>";
             break;
 
-          // case 'language-code':
+          // case "language-code":
           //     response += "";
           //     break;
 
-          // case 'location-code':
+          // case "location-code":
           //     response += "";
           // break;
 
-          case 'owner':
+          case "owner":
             response += "<d:owner><d:href>" + prefix + "p/" + owner + "/</d:href></d:owner>";
             break;
 
           // TODO Fix URL
-          // case 'pre-publish-url':
+          // case "pre-publish-url":
           //     response += "<cs:pre-publish-url><d:href>https://127.0.0.1/cal/" + username + "/" + calendar.pkey + "</d:href></cs:pre-publish-url>";
           //     break;
 
-          // case 'publish-url':
+          // case "publish-url":
           //     response += "";
           //     break;
 
-          // case 'push-transports':
+          // case "push-transports":
           //     response += "";
           //     break;
 
-          // case 'pushkey':
+          // case "pushkey":
           //     response += "";
           //     break;
 
-          // case 'quota-available-bytes':
+          // case "quota-available-bytes":
           //     response += "";
           //     break;
 
-          // case 'quota-used-bytes':
+          // case "quota-used-bytes":
           //     response += "";
           //     break;
 
-          // case 'refreshrate':
+          // case "refreshrate":
           //     response += "";
           //     break;
 
-          // case 'resource-id':
+          // case "resource-id":
           //     response += "";
           //     break;
 
-          case 'resourcetype':
+          case "resourcetype":
             response += "<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>";
             break;
 
-          case 'schedule-calendar-transp':
+          case "schedule-calendar-transp":
             response += "<cal:schedule-calendar-transp><cal:opaque/></cal:schedule-calendar-transp>";
             break;
 
-          // case 'schedule-default-calendar-URL':
+          // case "schedule-default-calendar-URL":
           //     response += "";
           //     break;
 
-          // case 'source':
+          // case "source":
           //     response += "";
           //     break;
 
-          // case 'subscribed-strip-alarms':
+          // case "subscribed-strip-alarms":
           //     response += "";
           //     break;
 
-          // case 'subscribed-strip-attachments':
+          // case "subscribed-strip-attachments":
           //     response += "";
           //     break;
 
-          // case 'subscribed-strip-todos':
+          // case "subscribed-strip-todos":
           //     response += "";
           //     break;
 
-          // case 'supported-calendar-component-set':
+          // case "supported-calendar-component-set":
           //     response += "";
           //     break;
 
-          // case 'supported-calendar-component-sets':
+          // case "supported-calendar-component-sets":
           //   response += "<cal:supported-calendar-component-set><cal:comp name=\"VEVENT\"/></cal:supported-calendar-component-set>";
           //   break;
 
-          // case 'supported-report-set':
+          // case "supported-report-set":
           //   response += getSupportedReportSet(false);
           //   break;
 
-          // case 'getctag':
+          // case "getctag":
           //   response += "<cs:getctag>\"" + token + "\"</cs:getctag>";
           //   break;
 
-          // case 'getetag':
+          // case "getetag":
           // no response?
           //response += "<d:getetag>http://swordlord.com/ns/sync/" + token + "</d:getetag>";
           // isGetEvent = true;
           // break;
 
-          // case 'checksum-versions':
+          // case "checksum-versions":
           // no response?
           // break;
 
-          case 'sync-token':
+          case "sync-token":
             response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
             break;
 
-          // case 'acl':
+          // case "acl":
           //   response += getACL(comm);
           //   break;
 
-          // case 'getcontenttype':
+          // case "getcontenttype":
           //response += "<d:getcontenttype>text/calendar;charset=utf-8</d:getcontenttype>";
           // break;
 
           default:
-            if (name != 'text') console.log("CAL-PF: not handled: " + name);
+            if (name != "text") console.log("CAL-PF: not handled: " + name);
             break;
         }
       }
@@ -289,9 +289,9 @@ class Calendars {
 
   _isPropfind(xmlDoc) {
     const node = xmlDoc.get("/A:propfind", {
-      A: 'DAV:',
+      A: "DAV:",
       B: "urn:ietf:params:xml:ns:carddav",
-      C: 'http://calendarserver.org/ns/',
+      C: "http://calendarserver.org/ns/",
       D: "http://apple.com/ns/ical/",
       E: "http://me.com/_namespace/"
     });
@@ -303,10 +303,10 @@ class Calendars {
   }
 
   _isAllProp(xmlDoc) {
-    const temp = xmlDoc.get('/A:propfind/A:allprop', {
-      A: 'DAV:',
+    const temp = xmlDoc.get("/A:propfind/A:allprop", {
+      A: "DAV:",
       B: "urn:ietf:params:xml:ns:caldav",
-      C: 'http://calendarserver.org/ns/',
+      C: "http://calendarserver.org/ns/",
       D: "http://apple.com/ns/ical/",
       E: "http://me.com/_namespace/"
     });
@@ -323,10 +323,10 @@ class Calendars {
       throw new Error("invalid body")
 
 
-    const node = xmlDoc.get('/A:propfind/A:prop', {
-      A: 'DAV:',
+    const node = xmlDoc.get("/A:propfind/A:prop", {
+      A: "DAV:",
       B: "urn:ietf:params:xml:ns:caldav",
-      C: 'http://calendarserver.org/ns/',
+      C: "http://calendarserver.org/ns/",
       D: "http://apple.com/ns/ical/",
       E: "http://me.com/_namespace/"
     });
