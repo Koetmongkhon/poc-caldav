@@ -27,6 +27,14 @@ class Calendars extends Base {
     }
   };
 
+  options(req, res) {
+    res.set
+    res.set("Allow", "OPTIONS, GET, POST, PUT, DELETE, PROPFIND, PROPPATCH, REPORT");
+    res.set("DAV", "1, 2, access-control, calendar-access")
+    res.status(200);
+    res.end();
+  }
+
   report(req, res) {
     try {
       const { calId } = req.params;

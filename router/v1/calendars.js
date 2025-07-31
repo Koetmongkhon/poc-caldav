@@ -5,14 +5,13 @@ const {
 } = global.handlers;
 const router = require("express").Router();
 
+// not support LOCK, UNLOCK, COPY, MOVE, MKCOL || MKCALENDAR, AUDIO
 router.propfind("", xmlParser, calendars.propfind.bind(calendars));
 // router.proppatch();
-// router.options();
+router.options("", calendars.options.bind(calendars));
 router.report("/:calId", xmlParser, calendars.report.bind(calendars));
-// // router.makeCalendar();
 // router.put();
 // router.get();
 // router.delete();
-// router.move();
 
 module.exports = router;
