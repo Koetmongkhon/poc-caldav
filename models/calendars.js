@@ -1,4 +1,5 @@
 const { encodeHTML } = require("../utils/utils");
+const { getXMLHead } = require("../utils/xml");
 
 class Calendars {
   constructor(config) {
@@ -78,7 +79,6 @@ class Calendars {
       response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
     } else {
       var len = children.length;
-      console.log(children);
       for (var i = 0; i < len; ++i) {
         var child = children[i];
         var name = child.name();
@@ -331,7 +331,7 @@ class Calendars {
       E: "http://me.com/_namespace/"
     });
 
-    let response = "";
+    let response = getXMLHead();
     if (this._isCheckSum(xmlDoc)) {
       console.log("get summary");
       response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
@@ -358,7 +358,6 @@ class Calendars {
       }
     ];
     calendars.forEach(c => {
-      console.log("Calendar:", c);
       response += this._returnCalendar("USERNAME", c, children, isAllProp);
     });
     response += "</d:multistatus>";
