@@ -1,4 +1,4 @@
-class Calendars {
+class Caldav {
   constructor(config) {
     this.config = config;
   }
@@ -72,6 +72,10 @@ class Calendars {
   get(user, calId, eventId) {
     return this.model.get(user, calId, eventId);
   }
+
+  delete(user, calId) {
+    return this.model.delete(user, calId);
+  }
 }
 
-module.exports = Calendars;
+module.exports = Caldav;

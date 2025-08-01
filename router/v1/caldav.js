@@ -1,17 +1,17 @@
 const { xmlParser } = require("../../middlewares/xml_parser");
 
 const {
-  calendars,
+  caldav,
 } = global.handlers;
 const router = require("express").Router();
 
 // not support LOCK, UNLOCK, COPY, MOVE, MKCOL || MKCALENDAR, AUDIO
-router.propfind("", xmlParser, calendars.propfind.bind(calendars));
+router.propfind("", xmlParser, caldav.propfind.bind(caldav));
 // router.proppatch();
-router.options("", calendars.options.bind(calendars));
-router.report("/:calId", xmlParser, calendars.report.bind(calendars));
+router.options("", caldav.options.bind(caldav));
+router.report("/:calId", xmlParser, caldav.report.bind(caldav));
 // router.put();
-router.get("/:calId/:eventId", calendars.get.bind(calendars));
+router.get("/:calId/:eventId", caldav.get.bind(caldav));
 // router.delete();
 
 module.exports = router;

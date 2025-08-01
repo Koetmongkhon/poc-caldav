@@ -19,7 +19,7 @@ class Calendars {
   }
 
   _getCalendarRootNodeResponse(owner, children, isAll) {
-    const response = "";
+    let response = "";
 
     response += "<d:response><d:href>" + this.config.davPrefix + "USERNAME" + "/CALENDAR-ID" + "</d:href>";
     response += "<d:propstat>";
@@ -30,7 +30,7 @@ class Calendars {
       response += "<d:resourcetype><d:collection/></d:resourcetype>";
     } else {
       const len = children.length;
-      for (const i = 0; i < len; ++i) {
+      for (let i = 0; i < len; ++i) {
         const child = children[i];
         const name = child.name();
         switch (name) {
@@ -62,7 +62,7 @@ class Calendars {
   }
 
   _returnPropfindElements(owner, calendar, children, isAll, callback) {
-    const response = "";
+    let response = "";
 
     const token = "SYNC-TOKEN";
 
@@ -80,7 +80,7 @@ class Calendars {
       response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
     } else {
       const len = children.length;
-      for (const i = 0; i < len; ++i) {
+      for (let i = 0; i < len; ++i) {
         const child = children[i];
         const name = child.name();
         switch (name) {
@@ -271,7 +271,7 @@ class Calendars {
   }
 
   _returnCalendar(owner, calendar, children, isAll) {
-    const response = "";
+    let response = "";
 
     response += "	<d:response>";
     response += "		<d:href>" + this.config.davPrefix + "cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";
@@ -578,6 +578,12 @@ class Calendars {
       content: event,
       etag: `ETAG-${icsId}`,
     };
+  }
+
+  delete(user, calId) {
+    console.log("delete calendar");
+    // TODO: delete event;
+    return;
   }
 };
 

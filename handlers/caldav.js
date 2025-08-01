@@ -1,13 +1,13 @@
 const Base = require("./Base");
 
-class Calendars extends Base {
+class Caldav extends Base {
   constructor(config) {
     super(config);
   }
 
-  /** @type {import("../facades/calendars")} */
+  /** @type {import("../facades/caldav")} */
   get facade() {
-    return global.facades.calendars;
+    return global.facades.caldav;
   }
 
   propfind(req, res) {
@@ -73,6 +73,24 @@ class Calendars extends Base {
       res.json({ "message": message });
     }
   }
+
+  delete(req, res) {
+    const { calId, eventId } = req.params;
+    const user = "USERNAME";
+    try {
+      this.facade.delete(user, calId);
+    } catch (err) {
+      console.log(err);
+      let code = 500;
+      let message = "internal server";
+      if (err.message.includes("invalid")) {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({ "message": message });
+    }
+  }
 }
 
-module.exports = Calendars;
+module.exports = Caldav;
