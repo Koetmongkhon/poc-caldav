@@ -11,7 +11,7 @@ router.propfind("", xmlParser, calendars.propfind.bind(calendars));
 router.options("", calendars.options.bind(calendars));
 router.report("/:calId", xmlParser, calendars.report.bind(calendars));
 // router.put();
-// router.get();
+router.get("/:calId/:eventId", calendars.get.bind(calendars));
 // router.delete();
 
 module.exports = router;

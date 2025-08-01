@@ -52,6 +52,27 @@ class Calendars extends Base {
       res.json({ "message": message });
     }
   }
+
+  get(req, res) {
+    const { calId, eventId } = req.params;
+    const user = "USERNAME";
+    try {
+      const result = this.facade.get(user, calId, eventId);
+      res.set("Content-Type", "text/calendar");
+      res.set("ETag", result.etag);
+      res.send(result.content);
+    } catch (err) {
+      console.log(err);
+      let code = 500;
+      let message = "internal server";
+      if (err.message.includes("invalid")) {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({ "message": message });
+    }
+  }
 }
 
 module.exports = Calendars;

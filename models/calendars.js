@@ -560,6 +560,25 @@ class Calendars {
     response += this._returnEvents({ id: calendarId }, events, props)
     return response;
   }
+
+  get(user, calId, eventId) {
+    console.log("get event");
+    const icsId = parseHrefToIcsId(eventId);
+    // TODO: get event
+    const event = {
+      id: "EVENT1",
+      name: "event_1",
+      start: 1753951657000,
+      end: 1753951659000,
+      isAllDay: false,
+      creator: user,
+    };
+    // TODO: parse event into ics
+    return {
+      content: event,
+      etag: `ETAG-${icsId}`,
+    };
+  }
 };
 
 module.exports = Calendars;

@@ -68,6 +68,10 @@ class Calendars {
         throw new Error("invalid report request");
     };
   }
+
+  get(user, calId, eventId) {
+    return this.model.get(user, calId, eventId);
+  }
 }
 
 module.exports = Calendars;
