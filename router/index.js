@@ -1,5 +1,5 @@
 const router = require("express").Router();
 
-router.use("/v1", require("./v1"));
+router.use("/caldav", require("./v1"));
 
 module.exports = router;

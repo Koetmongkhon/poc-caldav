@@ -1,8 +1,10 @@
 const xml = require("libxmljs");
 
 const xmlParser = (req, res, next) => {
+  console.log("parsing xml");
   try {
     if (req.rawBody) {
+      console.log(req.rawBody);
       req.body = xml.parseXml(req.rawBody);
     }
     next();

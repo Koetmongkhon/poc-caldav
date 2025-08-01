@@ -22,12 +22,12 @@ class Calendars extends Base {
   _getCalendarRootNodeResponse(owner, children, isAll) {
     let response = "";
 
-    response += "<d:response><d:href>" + this.config.davPrefix + "USERNAME" + "/CALENDAR-ID" + "</d:href>";
+    response += "<d:response><d:href>" + this.config.davPrefix + "/USERNAME" + "/CALENDAR-ID" + "</d:href>";
     response += "<d:propstat>";
     response += "<d:prop>";
 
     if (isAll) {
-      response += "<d:owner><d:href>" + this.config.davPrefix + "p/" + owner + "/</d:href></d:owner>";
+      response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/></d:resourcetype>";
     } else {
       const len = children.length;
@@ -40,7 +40,7 @@ class Calendars extends Base {
           //   break;
 
           case "owner":
-            response += "<d:owner><d:href>" + this.config.davPrefix + "p/" + owner + "/</d:href></d:owner>";
+            response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
             break;
 
           case "resourcetype":
@@ -75,7 +75,7 @@ class Calendars extends Base {
 
       response += "<cal:calendar-timezone>" + encodeHTML("Asia/Bangkok") + "</cal:calendar-timezone>";
       response += "<d:displayname>" + encodeHTML(calendar.displayname) + "</d:displayname>";
-      response += "<d:owner><d:href>" + this.config.davPrefix + "p/" + owner + "/</d:href></d:owner>";
+      response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>";
       response += "<cal:schedule-calendar-transp><cal:opaque/></cal:schedule-calendar-transp>";
       response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
@@ -275,7 +275,7 @@ class Calendars extends Base {
     let response = "";
 
     response += "	<d:response>";
-    response += "		<d:href>" + this.config.davPrefix + "cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";
+    response += "		<d:href>" + this.config.davPrefix + "/cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";
     response += "		<d:propstat>";
     response += "			<d:prop>";
 
@@ -295,7 +295,7 @@ class Calendars extends Base {
     if (this._isCheckSum(xmlDoc)) {
       console.log("get summary");
       response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
-      response += "<d:response><d:href>" + this.config.davPrefix + "USERNAME" + "/CALENDAR-ID" + "</d:href></d:response>";
+      response += "<d:response><d:href>" + this.config.davPrefix + "/USERNAME" + "/CALENDAR-ID" + "</d:href></d:response>";
       response += "</d:multistatus>";
       return response;
     }
@@ -359,7 +359,7 @@ class Calendars extends Base {
   _returnEvents(calendar, events, props) {
     let response = "";
     events.forEach(event => {
-      response += "<d:response><d:href>" + this.config.davPrefix + calendar.id + "/" + event.id + ".ics</d:href>";
+      response += "<d:response><d:href>" + this.config.davPrefix + "/" + calendar.id + "/" + event.id + ".ics</d:href>";
       response += "<d:propstat>";
       response += "<d:prop>";
 
