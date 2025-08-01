@@ -43,11 +43,11 @@ class Caldav {
     return false;
   }
 
-  propfind(body) {
+  propfind(ctx, body) {
     if (!this._isPropfind(body))
       throw new Error("invalid body")
     const isAll = this._isAllProp(body);
-    return this.model.propfind(body, isAll);
+    return this.model.propfind(ctx, body, isAll);
   }
 
   report(calId, xmlDoc) {

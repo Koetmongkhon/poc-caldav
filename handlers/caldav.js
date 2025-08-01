@@ -12,7 +12,8 @@ class Caldav extends Base {
 
   propfind(req, res) {
     try {
-      const resultXml = this.facade.propfind(req.body);
+      const ctx = this.newContext(req);
+      const resultXml = this.facade.propfind(ctx, req.body);
       this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);

@@ -14,6 +14,7 @@ const routers = require("./router");
 
 app.use((req, res, next) => {
   console.log(`receive ${req.method} ${req.path}`);
+  req.absPath = req.path;
   next();
 });
 app.propfind("/.well-known/caldav", (req, res) => {

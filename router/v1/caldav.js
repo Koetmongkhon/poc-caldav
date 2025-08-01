@@ -6,7 +6,7 @@ const {
 const router = require("express").Router();
 
 // not support LOCK, UNLOCK, COPY, MOVE, MKCOL || MKCALENDAR, AUDIO
-router.propfind("", xmlParser, caldav.propfind.bind(caldav));
+router.propfind("/:user", xmlParser, caldav.propfind.bind(caldav));
 // router.proppatch();
 router.options("", caldav.options.bind(caldav));
 router.report("/:calId", xmlParser, caldav.report.bind(caldav));

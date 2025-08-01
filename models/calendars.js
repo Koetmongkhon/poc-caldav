@@ -19,15 +19,16 @@ class Calendars extends Base {
     return nodeChecksum !== undefined && nodeChecksum !== null;
   }
 
-  _getCalendarRootNodeResponse(owner, children, isAll) {
+  _getCalendarRootNodeResponse(ctx, children, isAll) {
+    const { user: owner } = ctx;
     let response = "";
 
-    response += "<d:response><d:href>" + this.config.davPrefix + "/USERNAME" + "/CALENDAR-ID" + "</d:href>";
+    response += "<d:response><d:href>" + ctx.path + "</d:href>";
     response += "<d:propstat>";
     response += "<d:prop>";
 
     if (isAll) {
-      response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
+      response += "<d:owner><d:href>" + "/caldav/p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/></d:resourcetype>";
     } else {
       const len = children.length;
@@ -40,7 +41,7 @@ class Calendars extends Base {
           //   break;
 
           case "owner":
-            response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
+            response += "<d:owner><d:href>" + "/caldav/p/" + owner + "/</d:href></d:owner>";
             break;
 
           case "resourcetype":
@@ -62,7 +63,28 @@ class Calendars extends Base {
     return response;
   }
 
-  _returnPropfindElements(owner, calendar, children, isAll, callback) {
+  _getSupportedReportSet(isRoot) {
+    var response = "";
+
+    response += "<d:supported-report-set>";
+
+    if (!isRoot) {
+      response += "<d:supported-report><d:report><cal:calendar-multiget/></d:report></d:supported-report>";
+      response += "<d:supported-report><d:report><cal:calendar-query/></d:report></d:supported-report>";
+      response += "<d:supported-report><d:report><cal:free-busy-query/></d:report></d:supported-report>";
+    }
+
+    response += "<d:supported-report><d:report><d:sync-collection/></d:report></d:supported-report>";
+    response += "<d:supported-report><d:report><d:expand-property/></d:report></d:supported-report>";
+    response += "<d:supported-report><d:report><d:principal-property-search/></d:report></d:supported-report>";
+    response += "<d:supported-report><d:report><d:principal-search-property-set/></d:report></d:supported-report>";
+    response += "</d:supported-report-set>";
+
+    return response;
+  }
+
+  _returnPropfindElements(ctx, calendar, children, isAll, callback) {
+    const { user: owner } = ctx;
     let response = "";
 
     const token = "SYNC-TOKEN";
@@ -75,7 +97,7 @@ class Calendars extends Base {
 
       response += "<cal:calendar-timezone>" + encodeHTML("Asia/Bangkok") + "</cal:calendar-timezone>";
       response += "<d:displayname>" + encodeHTML(calendar.displayname) + "</d:displayname>";
-      response += "<d:owner><d:href>" + this.config.davPrefix + "/p/" + owner + "/</d:href></d:owner>";
+      response += "<d:owner><d:href>" + "/caldav/p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>";
       response += "<cal:schedule-calendar-transp><cal:opaque/></cal:schedule-calendar-transp>";
       response += "<d:sync-token>\"" + token + "\"</d:sync-token>";
@@ -156,7 +178,7 @@ class Calendars extends Base {
           // break;
 
           case "owner":
-            response += "<d:owner><d:href>" + prefix + "p/" + owner + "/</d:href></d:owner>";
+            response += "<d:owner><d:href>" + "/caldav/p/" + owner + "/</d:href></d:owner>";
             break;
 
           // TODO Fix URL
@@ -220,21 +242,18 @@ class Calendars extends Base {
           //     response += "";
           //     break;
 
-          // case "supported-calendar-component-set":
-          //     response += "";
-          //     break;
+          case "supported-calendar-component-set":
+          case "supported-calendar-component-sets":
+            response += "<cal:supported-calendar-component-set><cal:comp name=\"VEVENT\"/></cal:supported-calendar-component-set>";
+            break;
 
-          // case "supported-calendar-component-sets":
-          //   response += "<cal:supported-calendar-component-set><cal:comp name=\"VEVENT\"/></cal:supported-calendar-component-set>";
-          //   break;
+          case "supported-report-set":
+            response += this._getSupportedReportSet(false);
+            break;
 
-          // case "supported-report-set":
-          //   response += getSupportedReportSet(false);
-          //   break;
-
-          // case "getctag":
-          //   response += "<cs:getctag>\"" + token + "\"</cs:getctag>";
-          //   break;
+          case "getctag":
+            response += "<cs:getctag>\"" + token + "\"</cs:getctag>";
+            break;
 
           // case "getetag":
           // no response?
@@ -271,15 +290,15 @@ class Calendars extends Base {
     return response;
   }
 
-  _returnCalendar(owner, calendar, children, isAll) {
+  _returnCalendar(ctx, calendar, children, isAll) {
     let response = "";
 
     response += "	<d:response>";
-    response += "		<d:href>" + this.config.davPrefix + "/cal/" + owner + "/" + "CALENDAR_ID" + "/" + calendar.pkey + "/</d:href>";
+    response += "		<d:href>" + ctx.path + "/" + calendar.pkey + "/</d:href>";
     response += "		<d:propstat>";
     response += "			<d:prop>";
 
-    response += this._returnPropfindElements(owner, calendar, children, isAll);
+    response += this._returnPropfindElements(ctx, calendar, children, isAll);
 
     response += "			</d:prop>";
     response += "			<d:status>HTTP/1.1 200 OK</d:status>";
@@ -289,13 +308,13 @@ class Calendars extends Base {
     return response;
   }
 
-  propfind(xmlDoc, isAll) {
+  propfind(ctx, xmlDoc, isAll) {
     console.log("request propfind:", isAll);
     let response = getXMLHead();
     if (this._isCheckSum(xmlDoc)) {
       console.log("get summary");
       response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
-      response += "<d:response><d:href>" + this.config.davPrefix + "/USERNAME" + "/CALENDAR-ID" + "</d:href></d:response>";
+      response += "<d:response><d:href>" + ctx.path + "</d:href></d:response>";
       response += "</d:multistatus>";
       return response;
     }
@@ -313,7 +332,7 @@ class Calendars extends Base {
     }
 
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
-    response += this._getCalendarRootNodeResponse("USERNAME", children, isAll);
+    response += this._getCalendarRootNodeResponse(ctx, children, isAll);
 
     const calendars = [
       {
@@ -323,7 +342,7 @@ class Calendars extends Base {
       }
     ];
     calendars.forEach(c => {
-      response += this._returnCalendar("USERNAME", c, children, isAll);
+      response += this._returnCalendar(ctx, c, children, isAll);
     });
     response += "</d:multistatus>";
     return response;
