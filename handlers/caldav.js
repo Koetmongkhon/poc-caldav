@@ -38,8 +38,8 @@ class Caldav extends Base {
 
   report(req, res) {
     try {
-      const { calId } = req.params;
-      const resultXml = this.facade.report(calId, req.body);
+      const ctx = this.newContext(req);
+      const resultXml = this.facade.report(ctx, req.body);
       this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);

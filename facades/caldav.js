@@ -50,7 +50,7 @@ class Caldav {
     return this.model.propfind(ctx, body, isAll);
   }
 
-  report(calId, xmlDoc) {
+  report(ctx, xmlDoc) {
     console.log("request report");
     const rootNode = xmlDoc.root();
     const name = rootNode.name();
@@ -62,11 +62,11 @@ class Caldav {
 
       case "calendar-multiget":
         console.log("calendar-multiget");
-        return this.model.calendarMultiget(calId, xmlDoc);
+        return this.model.calendarMultiget(ctx, xmlDoc);
 
       case "calendar-query":
         console.log("calendar-query");
-        return this.model.calendarQuery(calId, xmlDoc);
+        return this.model.calendarQuery(ctx, xmlDoc);
 
       default:
         if (name != "text") console.log("P-R: not handled: " + name);
