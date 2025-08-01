@@ -78,7 +78,8 @@ class Caldav extends Base {
     const { calId, eventId } = req.params;
     const user = "USERNAME";
     try {
-      this.facade.delete(user, calId);
+      this.facade.delete(user, calId, eventId);
+      res.end();
     } catch (err) {
       console.log(err);
       let code = 500;

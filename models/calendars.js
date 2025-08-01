@@ -1,10 +1,11 @@
 const moment = require("moment");
 const { encodeHTML } = require("../utils/utils");
 const { getXMLHead } = require("../utils/xml");
+const Base = require("./base");
 
-class Calendars {
+class Calendars extends Base {
   constructor(config) {
-    this.config = config;
+    super(config);
   };
 
   _isCheckSum(xmlDoc) {
@@ -502,7 +503,7 @@ class Calendars {
             break;
 
           case 'href':
-            arrHrefs.push(parseHrefToIcsId(child.text()));
+            arrHrefs.push(this.parseHrefToIcsId(child.text()));
             break;
 
           default:
@@ -561,25 +562,6 @@ class Calendars {
     return response;
   }
 
-  get(user, calId, eventId) {
-    console.log("get event");
-    const icsId = parseHrefToIcsId(eventId);
-    // TODO: get event
-    const event = {
-      id: "EVENT1",
-      name: "event_1",
-      start: 1753951657000,
-      end: 1753951659000,
-      isAllDay: false,
-      creator: user,
-    };
-    // TODO: parse event into ics
-    return {
-      content: event,
-      etag: `ETAG-${icsId}`,
-    };
-  }
-
   delete(user, calId) {
     console.log("delete calendar");
     // TODO: delete event;
@@ -588,10 +570,3 @@ class Calendars {
 };
 
 module.exports = Calendars;
-
-function parseHrefToIcsId(href) {
-  var e = href.split("/");
-  var id = e[e.length - 1];
-
-  return id.substr(0, id.length - 4);
-}

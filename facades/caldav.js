@@ -8,6 +8,11 @@ class Caldav {
     return global.models.calendars;
   }
 
+  /**@type {import ("../models/events");} */
+  get eventModel() {
+    return global.models.events;
+  }
+
   _isPropfind(xmlDoc) {
     const node = xmlDoc.get("/A:propfind", {
       A: "DAV:",
@@ -70,10 +75,13 @@ class Caldav {
   }
 
   get(user, calId, eventId) {
-    return this.model.get(user, calId, eventId);
+    return this.eventModel.get(user, calId, eventId);
   }
 
-  delete(user, calId) {
+  delete(user, calId, eventId) {
+    if (eventId) {
+      return this.eventModel.delete(user, calId, eventId);
+    }
     return this.model.delete(user, calId);
   }
 }

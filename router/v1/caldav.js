@@ -12,6 +12,7 @@ router.options("", caldav.options.bind(caldav));
 router.report("/:calId", xmlParser, caldav.report.bind(caldav));
 // router.put();
 router.get("/:calId/:eventId", caldav.get.bind(caldav));
-// router.delete();
+router.delete("/:calId/:eventId", caldav.delete.bind(caldav));
+router.delete("/:calId", caldav.delete.bind(caldav));
 
 module.exports = router;
