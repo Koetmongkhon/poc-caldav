@@ -111,6 +111,24 @@ class Caldav extends Base {
       res.json({ "message": message });
     }
   }
+
+  put(req, res) {
+    const { user, calId, eventId } = req.params;
+    try {
+      this.facade.put(user, calId, eventId, req.body);
+      res.end();
+    } catch (err) {
+      console.log(err);
+      let code = 500;
+      let message = "internal server";
+      if (err.message.includes("invalid")) {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({ "message": message });
+    }
+  }
 }
 
 module.exports = Caldav;

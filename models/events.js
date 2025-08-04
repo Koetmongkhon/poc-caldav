@@ -1,3 +1,4 @@
+const { getXMLHead } = require("../utils/xml");
 const Base = require("./base");
 
 class Events extends Base {
@@ -28,6 +29,15 @@ class Events extends Base {
     console.log("delete event");
     const icsId = this.parseHrefToIcsId(eventId);
     // TODO: delete event;
+    return;
+  }
+
+  put(user, calId, eventId, body) {
+    console.log("put event");
+    const icsId = this.parseHrefToIcsId(eventId);
+    // TODO: parse ics body;
+    // TODO: get event;
+    // TODO: put event;
     return;
   }
 }

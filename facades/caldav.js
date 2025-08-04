@@ -89,6 +89,10 @@ class Caldav {
     }
     return this.model.delete(user, calId);
   }
+
+  put(user, calId, eventId, body) {
+    return this.eventModel.put(user, calId, eventId, body);
+  }
 }
 
 module.exports = Caldav;
