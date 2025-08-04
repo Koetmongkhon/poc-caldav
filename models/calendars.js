@@ -417,9 +417,9 @@ class Calendars extends Base {
     return response;
   };
 
-  _returnEvent(calendar, event, props) {
+  async _returnEvent(calendar, event, props) {
     let response = "";
-    props.forEach(child => {
+    for (const child of props) {
       const name = child.name();
       switch (name) {
         case "getetag":
@@ -433,34 +433,35 @@ class Calendars extends Base {
 
         case "calendar-data":
           // TODO: change event into ics
-          response += "<cal:calendar-data>" + `<BEGIN>${JSON.stringify(event)}</BEGIN>` + "</cal:calendar-data>"; // has to be cal: since a few lines below the namespace is cal: not c:
+          const icsString = await this.toIcs(event)
+          response += "<cal:calendar-data>" + icsString + "</cal:calendar-data>"; // has to be cal: since a few lines below the namespace is cal: not c:
           break;
 
         default:
           if (name != "text") console.log("P-R: not handled: " + name);
           break;
       }
-    });
+    }
     return response;
   }
 
-  _returnEvents(ctx, calendar, events, props) {
+  async _returnEvents(ctx, calendar, events, props) {
     let response = "";
-    events.forEach(event => {
+    for (const event of events) {
       response += "<d:response><d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + event.id + ".ics</d:href>";
       response += "<d:propstat>";
       response += "<d:prop>";
-
-      response += this._returnEvent(calendar, event, props);
-
+  
+      response += await this._returnEvent(calendar, event, props);
+  
       response += "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat>";
       response += "</d:response>";
-    });
+    }
     response += "</d:multistatus>";
     return response;
   }
 
-  calendarQuery(ctx, xmlDoc) {
+  async calendarQuery(ctx, xmlDoc) {
     const filter = { calendarId: ctx.calId };
     let response = getXMLHead();
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
@@ -562,11 +563,11 @@ class Calendars extends Base {
     });
     const props = nodeProp.childNodes();
 
-    response += this._returnEvents(ctx, calendar, events, props);
+    response += await this._returnEvents(ctx, calendar, events, props);
     return response;
   }
 
-  calendarMultiget(ctx, xmlDoc) {
+  async calendarMultiget(ctx, xmlDoc) {
     let response = getXMLHead();
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
     const user = "USERNAME";
@@ -646,7 +647,7 @@ class Calendars extends Base {
         creator: user,
       }
     ];
-    response += this._returnEvents(ctx, { id: ctx.calId }, events, props)
+    response += await this._returnEvents(ctx, { id: ctx.calId }, events, props)
     return response;
   }
 

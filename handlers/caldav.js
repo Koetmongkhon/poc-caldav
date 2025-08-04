@@ -54,10 +54,10 @@ class Caldav extends Base {
     res.end();
   }
 
-  report(req, res) {
+  async report(req, res) {
     try {
       const ctx = this.newContext(req);
-      const resultXml = this.facade.report(ctx, req.body);
+      const resultXml = await this.facade.report(ctx, req.body);
       this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);

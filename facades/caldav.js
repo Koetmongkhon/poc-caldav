@@ -55,7 +55,7 @@ class Caldav {
     return this.model.proppatch(ctx, xmlDoc);
   }
 
-  report(ctx, xmlDoc) {
+  async report(ctx, xmlDoc) {
     console.log("request report");
     const rootNode = xmlDoc.root();
     const name = rootNode.name();
@@ -67,11 +67,11 @@ class Caldav {
 
       case "calendar-multiget":
         console.log("calendar-multiget");
-        return this.model.calendarMultiget(ctx, xmlDoc);
+        return await this.model.calendarMultiget(ctx, xmlDoc);
 
       case "calendar-query":
         console.log("calendar-query");
-        return this.model.calendarQuery(ctx, xmlDoc);
+        return await this.model.calendarQuery(ctx, xmlDoc);
 
       default:
         if (name != "text") console.log("P-R: not handled: " + name);

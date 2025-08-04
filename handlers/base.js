@@ -4,6 +4,7 @@ class Base {
   }
 
   responseXml(res, status, body) {
+    console.log("Response:", body);
     res.set("Content-Type", "application/xml; charset=utf-8");
     res.status(status);
     res.send(body).end();
