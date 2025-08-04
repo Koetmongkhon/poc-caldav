@@ -28,6 +28,24 @@ class Caldav extends Base {
     }
   };
 
+  proppatch(req, res) {
+    try {
+      const ctx = this.newContext(req);
+      const resultXml = this.facade.proppatch(ctx, req.body);
+      this.responseXml(res, 200, resultXml);
+    } catch (err) {
+      console.log(err);
+      let code = 500;
+      let message = "internal server";
+      if (err.message == "invalid body") {
+        code = 400;
+        message = err.message;
+      }
+      res.status(code);
+      res.json({ "message": message });
+    }
+  }
+
   options(req, res) {
     res.set
     res.set("Allow", "OPTIONS, GET, POST, PUT, DELETE, PROPFIND, PROPPATCH, REPORT");

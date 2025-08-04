@@ -353,6 +353,70 @@ class Calendars extends Base {
     return response;
   };
 
+  proppatch(ctx, xmlDoc) {
+    let response = getXMLHead();
+    response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
+    response += "	<d:response>\r\n";
+    response += "		<d:href>" + ctx.path + "</d:href>\r\n";
+    response += "		<d:propstat>\r\n";
+    response += "			<d:prop>\r\n";
+
+    const node = xmlDoc.get('/A:propertyupdate/A:set/A:prop', {
+      A: 'DAV:',
+      B: "urn:ietf:params:xml:ns:caldav",
+      C: 'http://calendarserver.org/ns/',
+      D: "http://apple.com/ns/ical/",
+      E: "http://me.com/_namespace/"
+    });
+    const childs = node.childNodes();
+
+    const cal = {};
+    childs.forEach(c => {
+      var name = c.name();
+      switch (name) {
+        case 'default-alarm-vevent-date':
+          response += "<cal:default-alarm-vevent-date/>";
+          break;
+
+        case 'default-alarm-vevent-datetime':
+          response += "<cal:default-alarm-vevent-datetime/>";
+          break;
+
+        case 'displayname':
+          response += "<cal:displayname>" + c.text() + "</cal:displayname>";
+          cal.displayname = c.text();
+          break;
+
+        case 'calendar-timezone':
+          response += "<cal:calendar-timezone/>";
+          cal.timezone = c.text();
+          break;
+
+        case 'calendar-color':
+          response += "<ical:calendar-color>" + c.text() + "</ical:calendar-color>";
+          cal.colour = c.text();
+          break;
+
+        case 'calendar-order':
+          response += "<ical:calendar-order/>";
+          cal.order = c.text();
+          break;
+
+        default:
+          if (name != 'text') log.warn("CAL-PP: not handled: " + name);
+          break;
+      }
+    });
+    response += "			</d:prop>\r\n";
+    response += "			<d:status>HTTP/1.1 200 OK</d:status>\r\n";
+    response += "		</d:propstat>\r\n";
+    response += "	</d:response>\r\n";
+    response += "</d:multistatus>\r\n";
+
+    // TODO: update calendar
+    return response;
+  };
+
   _returnEvent(calendar, event, props) {
     let response = "";
     props.forEach(child => {

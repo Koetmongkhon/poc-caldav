@@ -50,6 +50,11 @@ class Caldav {
     return this.model.propfind(ctx, body, isAll);
   }
 
+  proppatch(ctx, xmlDoc) {
+    console.log("request proppatch");
+    return this.model.proppatch(ctx, xmlDoc);
+  }
+
   report(ctx, xmlDoc) {
     console.log("request report");
     const rootNode = xmlDoc.root();
