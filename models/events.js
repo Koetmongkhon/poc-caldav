@@ -6,6 +6,11 @@ class Events extends Base {
     super(config);
   }
 
+  /**@type {import("../services/calendar")} */
+  get calendarService() {
+    return global.services.calendar;
+  }
+
   get(user, calId, eventId) {
     console.log("get event");
     const icsId = this.parseHrefToIcsId(eventId);

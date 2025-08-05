@@ -8,6 +8,11 @@ class Calendars extends Base {
     super(config);
   };
 
+  /**@type {import("../services/calendar")} */
+  get calendarService() {
+    return global.services.calendar;
+  }
+
   _isCheckSum(xmlDoc) {
     const nodeChecksum = xmlDoc.get("/A:propfind/A:prop/C:checksum-versions", {
       A: "DAV:",
@@ -90,13 +95,13 @@ class Calendars extends Base {
     const token = "SYNC-TOKEN";
 
     if (isAll) {
-      response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + "#FFFFFF" + "</xical:calendar-color>";
+      response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + calendar.color + "</xical:calendar-color>";
 
       if (calendar.description)
         response += "<cal:calendar-description>" + calendar.description + "</cal:calendar-description>";
 
       response += "<cal:calendar-timezone>" + encodeHTML("Asia/Bangkok") + "</cal:calendar-timezone>";
-      response += "<d:displayname>" + encodeHTML(calendar.displayname) + "</d:displayname>";
+      response += "<d:displayname>" + encodeHTML(calendar.name) + "</d:displayname>";
       response += "<d:owner><d:href>" + "/caldav/p/" + owner + "/</d:href></d:owner>";
       response += "<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>";
       response += "<cal:schedule-calendar-transp><cal:opaque/></cal:schedule-calendar-transp>";
@@ -124,7 +129,7 @@ class Calendars extends Base {
           //     break;
 
           case "calendar-color":
-            response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + "#FFFFFF" + "</xical:calendar-color>";
+            response += "<xical:calendar-color xmlns:xical=\"http://apple.com/ns/ical/\" symbolic-color=\"custom\">" + calendar.color + "</xical:calendar-color>";
             break;
 
           case "calendar-description":
@@ -166,7 +171,7 @@ class Calendars extends Base {
           //     break;
 
           case "displayname":
-            response += "<d:displayname>" + encodeHTML(calendar.displayname) + "</d:displayname>";
+            response += "<d:displayname>" + encodeHTML(calendar.name) + "</d:displayname>";
             break;
 
           // case "language-code":
@@ -294,7 +299,7 @@ class Calendars extends Base {
     let response = "";
 
     response += "	<d:response>";
-    response += "		<d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + calendar.pkey + "/</d:href>";
+    response += "		<d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + calendar.calendar_id + "/</d:href>";
     response += "		<d:propstat>";
     response += "			<d:prop>";
 
@@ -308,7 +313,7 @@ class Calendars extends Base {
     return response;
   }
 
-  propfind(ctx, xmlDoc, isAll) {
+  async propfind(ctx, xmlDoc, isAll) {
     console.log("request propfind:", isAll);
     let response = getXMLHead();
     if (this._isCheckSum(xmlDoc)) {
@@ -334,18 +339,8 @@ class Calendars extends Base {
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
     response += this._getCalendarRootNodeResponse(ctx, children, isAll);
 
-    const calendars = [
-      {
-        pkey: "CALENDAR_1",
-        description: "CAL_1_description",
-        displayname: "cal-1",
-      },
-      {
-        pkey: "CALENDAR_2",
-        description: "CAL_2_description",
-        displayname: "cal-2",
-      },
-    ];
+    const calendars = await this.calendarService.listCalendars(ctx.session);
+    console.log("Calendar:", calendars);
     calendars.forEach(c => {
       response += this._returnCalendar(ctx, c, children, isAll);
     });

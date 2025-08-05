@@ -43,7 +43,7 @@ class Caldav {
     return false;
   }
 
-  propfind(ctx, body) {
+  async propfind(ctx, body) {
     if (!this._isPropfind(body))
       throw new Error("invalid body")
     const isAll = this._isAllProp(body);

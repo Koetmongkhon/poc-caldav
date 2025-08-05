@@ -1,4 +1,6 @@
 function encodeHTML(str) {
+  if (str == undefined || str == null)
+    return "";
   const map = {
     "&": "&amp;",
     "<": "&lt;",

@@ -10,10 +10,10 @@ class Caldav extends Base {
     return global.facades.caldav;
   }
 
-  propfind(req, res) {
+  async propfind(req, res) {
     try {
       const ctx = this.newContext(req);
-      const resultXml = this.facade.propfind(ctx, req.body);
+      const resultXml = await this.facade.propfind(ctx, req.body);
       this.responseXml(res, 207, resultXml);
     } catch (err) {
       console.log(err);

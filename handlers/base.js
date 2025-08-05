@@ -12,11 +12,18 @@ class Base {
 
   newContext(req) {
     const { user, calId, eventId } = req.params;
+    // TODO: get user information from JWT?
+    const session = {
+        "id": "10498",
+        "org": "1",
+        "user": "teamdev"
+    };
     const ctx = {
       user,
       calId,
       eventId,
       path: req.absPath || req.path,
+      session,
     };
     console.log(ctx);
     return ctx;

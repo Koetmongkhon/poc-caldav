@@ -1,11 +1,19 @@
 const express = require("express");
 const xmlparser = require("express-xml-bodyparser");
 const app = express();
+const config = require("./config.json");
+
+const RMQ = require("redismq");
+const channelManagerAddress = `${config.bus.channelManager.host}:${config.bus.channelManager.port}`;
+const mqApp = new RMQ(channelManagerAddress, config.bus.module, config.bus.module);
+mqApp.regisAndListen(config.bus.channel);
+global.rmq = mqApp;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
 
+global.services = require("./services");
 global.models = require("./models");
 global.facades = require("./facades");
 global.handlers = require("./handlers");
