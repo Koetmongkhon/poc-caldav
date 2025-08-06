@@ -83,11 +83,11 @@ class Caldav {
     return this.eventModel.get(session, eventId);
   }
 
-  delete(user, calId, eventId) {
+  delete(session, calId, eventId) {
     if (eventId) {
-      return this.eventModel.delete(user, calId, eventId);
+      return this.eventModel.delete(session, eventId);
     }
-    return this.model.delete(user, calId);
+    throw new Error("invalid calendar format: RESOURCE@STATE");
   }
 
   put(user, calId, eventId, body) {

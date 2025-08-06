@@ -92,11 +92,10 @@ class Caldav extends Base {
     }
   }
 
-  delete(req, res) {
-    const { calId, eventId } = req.params;
-    const user = "USERNAME";
+  async delete(req, res) {
     try {
-      this.facade.delete(user, calId, eventId);
+      const ctx = this.newContext(req);
+      await this.facade.delete(ctx.session, ctx.state, ctx.eventId);
       res.end();
     } catch (err) {
       console.log(err);

@@ -31,11 +31,10 @@ class Events extends Base {
     };
   }
 
-  delete(user, calId, eventId) {
+  delete(session, eventId) {
     console.log("delete event");
     const icsId = this.parseHrefToIcsId(eventId);
-    // TODO: delete event;
-    return;
+    return this.calendarService.deleteEvent(session, icsId);
   }
 
   put(user, calId, eventId, body) {

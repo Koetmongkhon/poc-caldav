@@ -69,6 +69,14 @@ class Calendar extends Connector {
     const func = "list-event";
     return this.sendRequest(session, func, data);
   }
+
+  async deleteEvent(session, id) {
+    const data = {
+      id,
+    }
+    const func = "delete-event";
+    return this.sendRequest(session, func, data);
+  }
 }
 
 module.exports = Calendar;

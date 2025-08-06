@@ -13,7 +13,6 @@ router.report("/:user/:calId", xmlParser, caldav.report.bind(caldav));
 router.report("/:user/:calId/:eventId", xmlParser, caldav.report.bind(caldav));
 router.put("/:user/:calId/:eventId", xmlParser, caldav.put.bind(caldav));
 router.get("/:user/:calId/:eventId", caldav.get.bind(caldav));
-router.delete("/:calId/:eventId", caldav.delete.bind(caldav));
-router.delete("/:calId", caldav.delete.bind(caldav));
+router.delete("/:user/:calId/:eventId", caldav.delete.bind(caldav));
 
 module.exports = router;
