@@ -72,11 +72,10 @@ class Caldav extends Base {
     }
   }
 
-  get(req, res) {
-    const { calId, eventId } = req.params;
-    const user = "USERNAME";
+  async get(req, res) {
     try {
-      const result = this.facade.get(user, calId, eventId);
+      const ctx = this.newContext(req);
+      const result = await this.facade.get(ctx.session, ctx.eventId);
       res.set("Content-Type", "text/calendar");
       res.set("ETag", result.etag);
       res.send(result.content);

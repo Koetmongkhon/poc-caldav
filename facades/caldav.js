@@ -79,8 +79,8 @@ class Caldav {
     };
   }
 
-  get(user, calId, eventId) {
-    return this.eventModel.get(user, calId, eventId);
+  get(session, eventId) {
+    return this.eventModel.get(session, eventId);
   }
 
   delete(user, calId, eventId) {
