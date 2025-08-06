@@ -597,49 +597,12 @@ class Calendars extends Base {
     console.log("id:", arrHrefs);
     console.log("props:", props);
 
-    // TODO: get events from db by arrHrefs
-    /*
-      [
-        {
-          id: "",
-          name: "",
-          start: 1234,
-          end: 1234,
-          isAllDay: true,
-          attendees: []{
-            id: "",
-            email: "",
-          },
-          creator: "",
-        }
-      ]
-    */
-    const events = [
-      {
-        id: "EVENT1",
-        name: "event_1",
-        start: 1753951657000,
-        end: 1753951659000,
-        isAllDay: false,
-        creator: user,
-      },
-      {
-        id: "EVENT2",
-        name: "event_2",
-        start: 1753952657000,
-        end: 1753952659000,
-        isAllDay: false,
-        creator: user,
-      },
-      {
-        id: "EVENT3",
-        name: "event_3",
-        start: 1753953657000,
-        end: 1753953659000,
-        isAllDay: false,
-        creator: user,
-      }
-    ];
+    const events = [];
+    for (const id of arrHrefs) {
+      const event = await this.calendarService.getEvent(ctx.session, id);
+      events.push(event);
+    };
+    console.log("Events:", events);
     response += await this._returnEvents(ctx, { id: ctx.calId }, events, props)
     return response;
   }
