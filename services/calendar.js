@@ -9,10 +9,18 @@ class Calendar extends Connector {
 
   async getCalendar(session, id) {
     const data = {
-      id,
+      calendar_id: id,
     };
     // TODO: sync token
     const func = "get-calendar";
+    return this.sendRequest(session, func, data);
+  }
+
+  async listState(session, id) {
+    const data = {
+      calendar_id: id,
+    };
+    const func = "list-state";
     return this.sendRequest(session, func, data);
   }
 
@@ -22,7 +30,28 @@ class Calendar extends Connector {
     };
     // TODO: sync token
     const func = "list-calendar";
-    return this.sendRequest(session, func, data);
+    let cals = await this.sendRequest(session, func, data);
+    console.log(cals);
+    const ret = [];
+    for (const c of cals) {
+      const states = await this.listState(session, c.calendar_id);
+      // {
+      //   "id": "resource_1618825725204",
+      //   "resource_id": "1618825725204",
+      //   "permission": true,
+      //   "name": "บรื้นๆ",
+      //   "color": "#FAD1A0"
+      // }
+      console.log("state:", states);
+      for (const s of states) {
+        ret.push({
+          calendar_id: `${c.calendar_id}@${s.id}`,
+          name: s.name,
+          color: s.color,
+        });
+      };
+    };
+    return ret;
   }
 
   async getEvent(session, id) {
@@ -33,8 +62,9 @@ class Calendar extends Connector {
     return this.sendRequest(session, func, data);
   }
 
-  async listEvents(session) {
-    const data = {};
+  async listEvents(session, id, state, data) {
+    data.calendar_id = id;
+    data.state_id = state;
     const func = "list-event";
     return this.sendRequest(session, func, data);
   }

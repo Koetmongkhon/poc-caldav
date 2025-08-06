@@ -3,7 +3,6 @@ const { getXMLHead } = require("../utils/xml");
 class Principal {
   constructor(config) {
     this.config = config;
-    this.prefix = config.davPrefix;
   }
 
   getSupportedReportSet() {
@@ -29,23 +28,23 @@ class Principal {
     return response;
   }
 
-  getCalendarUserAddressSet() {
+  getCalendarUserAddressSet(ctx) {
     var response = "";
 
     response += "        <cal:calendar-user-address-set>\r\n";
-    response += "        	<d:href>mailto:" + "USERNAME" + "</d:href>\r\n";
-    response += "        	<d:href>" + this.prefix + "/p/" + "USERNAME" + "/</d:href>\r\n";
+    response += "        	<d:href>mailto:" + ctx.user + "</d:href>\r\n";
+    response += "        	<d:href>" + "/caldav/p/" + ctx.user + "/</d:href>\r\n";
     response += "        </cal:calendar-user-address-set>\r\n";
 
     return response;
   }
 
-  propfind(xmlDoc) {
+  propfind(ctx, xmlDoc) {
     console.log("principal");
 
     let response = getXMLHead();
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\">";
-    response += "<d:response><d:href>" + this.prefix + "</d:href>";
+    response += "<d:response><d:href>" + "/caldav" + "</d:href>";
     response += "<d:propstat>";
     response += "<d:prop>";
 
@@ -76,23 +75,23 @@ class Principal {
           break;
 
         case 'principal-URL':
-          response += "<d:principal-URL><d:href>" + this.prefix + "/p/" + "USERNAME" + "/</d:href></d:principal-URL>\r\n";
+          response += "<d:principal-URL><d:href>" + "/caldav/p/" + ctx.user + "/</d:href></d:principal-URL>\r\n";
           break;
 
         case 'displayname':
-          response += "<d:displayname>" + "USERNAME" + "</d:displayname>";
+          response += "<d:displayname>" + ctx.user + "</d:displayname>";
           break;
 
         case 'principal-collection-set':
-          response += "<d:principal-collection-set><d:href>" + this.prefix + "/p/</d:href></d:principal-collection-set>";
+          response += "<d:principal-collection-set><d:href>" + "/caldav/p/</d:href></d:principal-collection-set>";
           break;
 
         case 'current-user-principal':
-          response += "<d:current-user-principal><d:href>" + this.prefix + "/p/" + "USERNAME" + "/</d:href></d:current-user-principal>";
+          response += "<d:current-user-principal><d:href>" + "/caldav/p/" + ctx.user + "/</d:href></d:current-user-principal>";
           break;
 
         case 'calendar-home-set':
-          response += "<cal:calendar-home-set><d:href>" + this.prefix + "/cal/" + "USERNAME" + "</d:href></cal:calendar-home-set>";
+          response += "<cal:calendar-home-set><d:href>" + "/caldav/cal/" + ctx.user + "</d:href></cal:calendar-home-set>";
           break;
 
         // case 'schedule-outbox-URL':

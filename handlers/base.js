@@ -12,17 +12,30 @@ class Base {
 
   newContext(req) {
     const { user, calId, eventId } = req.params;
+    /*
+      resource_Meeting_room@resource_1618825725205
+      {resource}_{state}
+    */
+    let resource;
+    let state;
+    if (calId) {
+      const calIdFormat = calId.split("@");
+      resource = calIdFormat[0];
+      if (calIdFormat.length > 1)
+        state = calIdFormat[1];
+    }
     // TODO: get user information from JWT?
     const session = {
-        "id": "10498",
-        "org": "1",
+        "id": user || "10498",
+        "org_id": "1",
         "user": "teamdev"
     };
     const ctx = {
-      user,
-      calId,
+      user: user || "10498",
+      calId: resource,
       eventId,
       path: req.absPath || req.path,
+      state,
       session,
     };
     console.log(ctx);

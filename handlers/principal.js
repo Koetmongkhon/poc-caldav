@@ -12,7 +12,8 @@ class Principal extends Base {
 
   propfind(req, res) {
     try {
-      const resultXml = this.facade.propfind(req.body);
+      const ctx = this.newContext(req);
+      const resultXml = this.facade.propfind(ctx, req.body);
       // set DAV header
       res.set("DAV", "1, 3, extended-mkcol, calendar-access, calendar-schedule, calendar-proxy, calendarserver-sharing, calendarserver-subscribed, calendarserver-principal-property-search, calendar-auto-schedule");
       this.responseXml(res, 207, resultXml);

@@ -1,6 +1,8 @@
 const ics = require("ics");
 const ical2json = require("ical2json");
 const moment = require("moment");
+const u = require("lodash");
+const hash = require("object-hash");
 
 class Base {
   constructor(config) {
@@ -112,14 +114,29 @@ class Base {
     {
       id: "",
       name: "",
-      start: 1234,
-      end: 1234,
-      isAllDay: true,
-      attendees: []{
-        id: "",
-        email: "",
-        isOrganizer: "",
-      },
+      startDateTime: 1754473680000,
+      endDateTime: 1754477280000,
+      attendees: [
+        {
+          id: "",
+          name: null || "",
+          email: null || "",
+          role: null,
+          rsvp: null,
+          joinState: 0,
+          isOrganizer: true,
+          comment: null
+        }
+      ],
+      isAllDay: false,
+      creator: '10498',
+      link_event_id: null,
+      state: 'resource_1618825725204',
+      createdDate: 1754388440520,
+      rrule: null,
+      rruleType: null,
+      group: null,
+      type: 'Resource'
     }
   */
   async toIcs(event) {
@@ -128,8 +145,8 @@ class Base {
       uid: event.id,
       title: event.name,
       productId: `caldav/ics`,
-      start: event.start,
-      end: event.end,
+      start: event.startDateTime,
+      end: event.endDateTime,
       // location: _data.location,
       organizer: participants.organizer,
       attendees: participants.attendees, // mock
@@ -148,6 +165,22 @@ class Base {
         return resolve(value);
       });
     });
+  }
+
+  eTag(event) {
+    const participants = this.getParticipants(event);
+    const input = {
+      uid: event.id,
+      title: event.name,
+      productId: `caldav/ics`,
+      start: event.startDateTime,
+      end: event.endDateTime,
+      // location: _data.location,
+      organizer: participants.organizer,
+      attendees: participants.attendees, // mock
+      // sequence: _data.version,
+    }
+    return hash.MD5(input);
   }
 }
 

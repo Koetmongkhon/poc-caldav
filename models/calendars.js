@@ -299,7 +299,7 @@ class Calendars extends Base {
     let response = "";
 
     response += "	<d:response>";
-    response += "		<d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + calendar.calendar_id + "/</d:href>";
+    response += "		<d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + encodeHTML(calendar.calendar_id) + "/</d:href>";
     response += "		<d:propstat>";
     response += "			<d:prop>";
 
@@ -418,7 +418,8 @@ class Calendars extends Base {
       const name = child.name();
       switch (name) {
         case "getetag":
-          response += "<d:getetag>\"" + `ETAG-${event.id}` + "\"</d:getetag>";
+          // TODO: real etag from updated date
+          response += "<d:getetag>\"" + this.eTag(event) + "\"</d:getetag>";
           break;
 
         case "getcontenttype":
@@ -446,9 +447,9 @@ class Calendars extends Base {
       response += "<d:response><d:href>" + `${ctx.path.endsWith("/") ? ctx.path : ctx.path + "/"}` + event.id + ".ics</d:href>";
       response += "<d:propstat>";
       response += "<d:prop>";
-  
+
       response += await this._returnEvent(calendar, event, props);
-  
+
       response += "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat>";
       response += "</d:response>";
     }
@@ -457,7 +458,7 @@ class Calendars extends Base {
   }
 
   async calendarQuery(ctx, xmlDoc) {
-    const filter = { calendarId: ctx.calId };
+    const filter = {};
     let response = getXMLHead();
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
 
@@ -475,12 +476,12 @@ class Calendars extends Base {
         switch (attr.name()) {
           case "start":
             const filterStart = moment(attr.value());
-            filter.startDate = filterStart.unix() + "000";
+            filter.from_date = +(filterStart.unix() + "000");
             break;
 
           case "end":
             const filterEnd = moment(attr.value());
-            filter.endDate = filterEnd.unix() + "000";
+            filter.to_date = +(filterEnd.unix() + "000");
             break;
 
           default:
@@ -489,22 +490,17 @@ class Calendars extends Base {
       });
     }
     console.log(filter);
+    // {
+    //   calendar_id: resource_Transportation
+    //   state_id: resource_1618825725204
+    //   from_date: 1753549200000
+    //   to_date: 1757178000000
+    // }
 
-    const user = "USERNAME";
-    // TODO: get calendar from db
-    /*
-      {
-        id: "",
-        name: "",
-        type: "",
-      }
-    */
     const calendar = {
-      id: "CAL1",
-      name: "cal_1",
-      type: "RESOURCE",
-    }
-    calendar.supported_cal_component = "VEVENT";
+      supported_cal_component: "VEVENT",
+    };
+    // const calendars = this.calendarService.
     // TODO: get events from db
     /*
       [
@@ -522,32 +518,34 @@ class Calendars extends Base {
         }
       ]
     */
-    const events = [
-      {
-        id: "EVENT1",
-        name: "event_1",
-        start: 1753951657000,
-        end: 1753951659000,
-        isAllDay: false,
-        creator: user,
-      },
-      {
-        id: "EVENT2",
-        name: "event_2",
-        start: 1753952657000,
-        end: 1753952659000,
-        isAllDay: false,
-        creator: user,
-      },
-      {
-        id: "EVENT3",
-        name: "event_3",
-        start: 1753953657000,
-        end: 1753953659000,
-        isAllDay: false,
-        creator: user,
-      }
-    ];
+    // const events = [
+    //   {
+    //     id: "EVENT1",
+    //     name: "event_1",
+    //     start: 1753951657000,
+    //     end: 1753951659000,
+    //     isAllDay: false,
+    //     creator: user,
+    //   },
+    //   {
+    //     id: "EVENT2",
+    //     name: "event_2",
+    //     start: 1753952657000,
+    //     end: 1753952659000,
+    //     isAllDay: false,
+    //     creator: user,
+    //   },
+    //   {
+    //     id: "EVENT3",
+    //     name: "event_3",
+    //     start: 1753953657000,
+    //     end: 1753953659000,
+    //     isAllDay: false,
+    //     creator: user,
+    //   }
+    // ];
+    const events = await this.calendarService.listEvents(ctx.session, ctx.calId, ctx.state, filter)
+    console.log("Events:", events);
 
     const nodeProp = xmlDoc.get("/B:calendar-query/A:prop", {
       A: "DAV:",
