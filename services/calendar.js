@@ -63,6 +63,7 @@ class Calendar extends Connector {
   }
 
   async listEvents(session, id, state, data) {
+    // TODO: handle recurrence events
     data.calendar_id = id;
     data.state_id = state;
     const func = "list-event";
