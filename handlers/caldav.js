@@ -110,11 +110,13 @@ class Caldav extends Base {
     }
   }
 
-  put(req, res) {
-    const { user, calId, eventId } = req.params;
+  async put(req, res) {
     try {
-      this.facade.put(user, calId, eventId, req.body);
-      res.end();
+      const ctx = this.newContext(req);
+      console.log("Raw:", req.rawBody);
+      console.log("Body:", req.body);
+      await this.facade.put(ctx, req.body);
+      res.status(201).end();
     } catch (err) {
       console.log(err);
       let code = 500;

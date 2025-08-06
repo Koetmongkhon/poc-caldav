@@ -10,8 +10,9 @@ mqApp.regisAndListen(config.bus.channel);
 global.rmq = mqApp;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
+app.use(express.text({ type: 'text/*' }));
 
 global.services = require("./services");
 global.models = require("./models");

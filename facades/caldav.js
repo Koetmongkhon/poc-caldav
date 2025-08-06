@@ -90,8 +90,8 @@ class Caldav {
     throw new Error("invalid calendar format: RESOURCE@STATE");
   }
 
-  put(user, calId, eventId, body) {
-    return this.eventModel.put(user, calId, eventId, body);
+  put(ctx, body) {
+    return this.eventModel.put(ctx, body);
   }
 }
 

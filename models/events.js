@@ -11,6 +11,11 @@ class Events extends Base {
     return global.services.calendar;
   }
 
+  /**@type {import("../services/resource_management")} */
+  get rmService() {
+    return global.services.resource_management;
+  }
+
   async get(session, eventId) {
     console.log("get event");
     const icsId = this.parseHrefToIcsId(eventId);
@@ -37,12 +42,56 @@ class Events extends Base {
     return this.calendarService.deleteEvent(session, icsId);
   }
 
-  put(user, calId, eventId, body) {
+  async createEvent(ctx, body) {
+    console.log("create event");
+    const { session } = ctx;
+    if (!body.attendees || body.attendees.length == 0)
+      body.attendees = [
+        {
+          "id": session.id,
+          "name": null,
+          "email": null,
+          "role": null,
+          "rsvp": null,
+          "joinState": 0,
+          "isOrganizer": true,
+          "comment": null
+        }
+      ]
+    if (!ctx.state)
+      throw new Error("invalid calendar id format: {RESOURCE}@{STATE}");
+    const stateFormat = ctx.state.split("_");
+    const resource = stateFormat[0];
+    stateFormat.shift();
+    const stateId = stateFormat.join("_");
+    switch (resource) {
+      case "resource":
+        body.id = stateId;
+        console.log(body);
+        return this.rmService.createReservation(session, body);
+      default:
+        throw new Error(`not support ${resource} resource`);
+    }
+  }
+
+  async put(ctx, body) {
     console.log("put event");
-    const icsId = this.parseHrefToIcsId(eventId);
+    console.log("Raw body:", body);
+    body = this.icsToEvent(body);
+    console.log("ics from body:", body);
+    const icsId = this.parseHrefToIcsId(ctx.eventId);
     // TODO: parse ics body;
     // TODO: get event;
     // TODO: put event;
+    try {
+      const target = await this.calendarService.getEvent(ctx.session, icsId);
+      throw new Error("not implemented");
+    } catch (err) {
+      if (err.code == 10002 || err.message.includes("Data not found")) {
+        return this.createEvent(ctx, body);
+      }
+      console.log(err);
+    }
     return;
   }
 }
