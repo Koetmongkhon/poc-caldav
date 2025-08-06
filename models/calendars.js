@@ -563,7 +563,6 @@ class Calendars extends Base {
   async calendarMultiget(ctx, xmlDoc) {
     let response = getXMLHead();
     response += "<d:multistatus xmlns:d=\"DAV:\" xmlns:cal=\"urn:ietf:params:xml:ns:caldav\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:card=\"urn:ietf:params:xml:ns:carddav\" xmlns:ical=\"http://apple.com/ns/ical/\">\r\n";
-    const user = "USERNAME";
 
     const node = xmlDoc.get('/B:calendar-multiget', {
       A: 'DAV:',
